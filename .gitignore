@@ -1,0 +1,12 @@
+*_settings.py
+*.pyc
+*~
+~*
+*.swp
+*.log
+*.dat
+*.sqlite3
+*.jpg
+*.png
+*.gif
+dat/
