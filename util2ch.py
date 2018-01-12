@@ -7,16 +7,22 @@ import codecs
 import chardet
 import lxml.html
 import re
+import time
 
 
 default_ua = { 'User-Agent' : 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2227.0 Safari/537.36' }
 
 url_bbsmenu = 'http://menu.open2ch.net/bbsmenu.html'
+file_bbsmenu = 'ita_list.txt'
 
-if __name__ == '__main__':
+
+def get_from_server(url):
+    # wait 1sec to avoid server overload
+    time.sleep(1)
+
     # get html from url
     try:
-        req = Request(url_bbsmenu, headers=default_ua)
+        req = Request(url, headers=default_ua)
         response = urlopen(req)
     except HTTPError as e:
         print('The server couldn\'t fulfill the request.:{}'.format(url))
@@ -31,6 +37,12 @@ if __name__ == '__main__':
     data_bytes = response.read()
     char_guessed = chardet.detect(data_bytes) 
     content = data_bytes.decode(char_guessed['encoding']) 
+    return content
+
+
+if __name__ == '__main__':
+    # get bbs menu
+    content = get_from_server(url_bbsmenu)
 
     # extract ita url and titles
     dom = lxml.html.fromstring(content)
@@ -46,8 +58,41 @@ if __name__ == '__main__':
             if re.match(r'http://', ita_url, re.I):
                 ita_list.append((ita_category, ita_title, ita_url))
 
-    # save to a file
-    with codecs.open('ita_list.txt', 'w', 'utf-8') as f:
+    # save ita list to a file
+    with codecs.open(file_bbsmenu, 'w', 'utf-8') as f:
         for ita in ita_list:
             f.write('\t'.join(ita))
             f.write('\n')
+
+    # choose ita randomly
+    import random
+    ita_info = random.choice(ita_list)
+    ita_category, ita_title, ita_url = ita_info
+    print("{}:{}:{}".format(ita_category, ita_title, ita_url))
+
+    # generate url for subject.txt of the ita
+    o = urlparse(ita_url)
+    p = o.path
+    if p[-1] != '/':
+        p += '/'
+    subject_url = "http://" + o.netloc + o.path + "subject.txt"
+    print(subject_url)
+
+    # get subject.txt from the server
+    subject_txt = get_from_server(subject_url)
+
+    # parse subject.txt to make sure list
+    sure_list = []
+    subject_lines = subject_txt.split('\n')
+    for s in subject_lines:
+        m = re.match(r'(\d+?\.dat)<>(.*) \((\d+)\)$', s.rstrip())
+        if m:
+            dat_name = m.group(1)
+            dat_title = m.group(2)
+            dat_resu = m.group(3)
+            sure_list.append((dat_name, dat_title, dat_resu))
+
+    # output top-10 sure for test
+    for i in range(0, min(10, len(sure_list))):
+        dat_name, dat_title, dat_resu = sure_list[i]
+        print("{}:{} ({})".format(dat_name, dat_title, dat_resu))
