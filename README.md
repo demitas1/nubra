@@ -1,10 +1,45 @@
-README
+# nubra
+
+
+"nubra" is an experimental python/flask project to create a new browser for open2ch.net.
+
+
+
+### 概要
+
+nubraは、おーぷん2ch用のブラウザを作ってみるプロジェクトです。
+
+今のところ、Flaskを使ってp2ブラウザっぽいものを作るのことを想定しています。
+
+### これまで出来たもの
+
+- open2ch.netの板一覧を取ってくる
+
+```
+$ python util2ch.py
+$ cat ita_list.txt
+```
+
+### ライセンス
+
+MIT License
+
 ----
 
-## nubra: making a new browser for open2ch.net
+以下、自分用メモ
+
+### 開発環境セットアップ
+
+```
+$ conda create --name nubra python=3
+$ source activate nubra
+$ pip install urllib3 lxml requests chardet python-dateutil
+```
+
+なんとなく必要そうなものを入れているが、必須でないものも多分ある
 
 
-## environ memo
+### environ memo
 
 ```
 $ pip list
