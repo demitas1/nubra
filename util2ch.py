@@ -8,11 +8,17 @@ import chardet
 import lxml.html
 import re
 import time
+import os
+import os.path
 
 
 default_ua = { 'User-Agent' : 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2227.0 Safari/537.36' }
 
+bbs_name = 'おーぷん2ch'
+url_bbs = 'http://open2ch.net'
 url_bbsmenu = 'http://menu.open2ch.net/bbsmenu.html'
+
+data_dir = './dat'
 file_bbsmenu = 'ita_list.txt'
 
 
@@ -58,8 +64,16 @@ if __name__ == '__main__':
             if re.match(r'http://', ita_url, re.I):
                 ita_list.append((ita_category, ita_title, ita_url))
 
+    # make dat root dir for the bbs
+    o = urlparse(url_bbs)
+    dat_bbs_root = os.path.join(data_dir, o.netloc)
+    print(dat_bbs_root)
+    if not os.path.isdir(dat_bbs_root):
+        os.makedirs(dat_bbs_root, exist_ok=True)
+
     # save ita list to a file
-    with codecs.open(file_bbsmenu, 'w', 'utf-8') as f:
+    path_bbsmenu = os.path.join(dat_bbs_root, file_bbsmenu)
+    with codecs.open(path_bbsmenu, 'w', 'utf-8') as f:
         for ita in ita_list:
             f.write('\t'.join(ita))
             f.write('\n')
