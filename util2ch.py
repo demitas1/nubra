@@ -83,7 +83,7 @@ class BBS(object):
                 ita_url = e.attrib['href']
                 ita_title = e.text
                 if re.match(r'http://', ita_url, re.I):
-                    ita = Ita(ita_category, ita_title, ita_url)
+                    ita = Ita(ita_category, ita_title, ita_url, parent=self)
                     self.ita_list.append(ita)
 
     def save_ita_list(self):
@@ -96,13 +96,58 @@ class BBS(object):
 
 
 class Ita(object):
-    def __init__(self, category, title, url):
+    def __init__(self, category, title, url, parent=None):
+        self.parent = parent
         self.category = category
         self.title = title
         self.url = url
+        self._url_subject = None
+        self._dat_root = None
+        self.sure_list = []
 
     def __str__(self):
         return "{}\t{}\t{}".format(
             self.category,
             self.title,
             self.url)
+
+    def url_subject(self):
+        if self._url_subject is None:
+            # generate url for subject.txt of the ita
+            o = urlparse(self.url)
+            p = o.path
+            if p[-1] != '/':
+                p += '/'
+            self._url_subject = "http://" + o.netloc + p + "subject.txt"
+        return self._url_subject
+
+    def dat_root(self):
+        if self._dat_root is None:
+            if self.parent and self.parent.dat_bbs_root:
+                # generate local file path for subjects
+                o = urlparse(self.url)
+                p = o.path
+                if p[0] == '/':
+                    p = p[1:]
+                self._dat_root = os.path.join(self.parent.dat_bbs_root, o.netloc, p)
+        return self._dat_root
+
+    def update(self):
+        subject_txt = self.get_from_server()
+        self.read_from_text(subject_txt)
+
+    def get_from_server(self):
+        subject_txt = get_from_server(self.url_subject())
+        return subject_txt
+
+    def read_from_text(self, subject_txt):
+        # parse subject.txt to make sure list
+        self.sure_list = []
+        subject_lines = subject_txt.split('\n')
+        for s in subject_lines:
+            m = re.match(r'(\d+?\.dat)<>(.*) \((\d+)\)$', s.rstrip())
+            if m:
+                dat_name = m.group(1)
+                dat_title = m.group(2)
+                dat_resu = m.group(3)
+                self.sure_list.append((dat_name, dat_title, dat_resu))

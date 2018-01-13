@@ -12,13 +12,15 @@ nubraは、おーぷん2ch用のブラウザを作ってみるプロジェクト
 
 ### これまで出来たもの
 
+- BBSクラス、Itaクラスの作成
+
 - open2ch.netの板一覧を取ってくる
 - ランダムに板を選んでトップ10のスレタイトルとdatファイル名を取る
 - 板ごとのdatファイル置き場をつくって、スレ一覧を保存する
 - トップにあるスレのdatの最後の3レスを表示する
 
 ```
-$ python util2ch.py
+$ python test.py
 $ cat dat/open2ch.net/ita_list.txt
 ```
 

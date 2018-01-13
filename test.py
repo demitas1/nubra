@@ -15,44 +15,18 @@ if __name__ == '__main__':
     bbs = util2ch.BBS(default_bbs)
     bbs.make_dat_root()
     bbs.update()
-    exit()
-
-
 
     # choose ita randomly
     import random
-    ita_info = random.choice(ita_list)
-    ita_category, ita_title, ita_url = ita_info
-    print("{}:{}:{}".format(ita_category, ita_title, ita_url))
+    ita = random.choice(bbs.ita_list)
+    print("ita:{}".format(str(ita)))
 
     # generate url for subject.txt of the ita
-    o = urlparse(ita_url)
-    p = o.path
-    if p[-1] != '/':
-        p += '/'
-    subject_url = "http://" + o.netloc + p + "subject.txt"
-    print("subject url:{}".format(subject_url))
+    print("subject url:[{}]".format(ita.url_subject()))
+    print("ita local dir:[{}]".format(ita.dat_root()))
+    ita.update()
 
-    # generate local file path for subjects
-    p = o.path
-    if p[0] == '/':
-        p = p[1:]
-    dat_ita_root = os.path.join(dat_bbs_root, o.netloc, p)
-    print("ita local dir:{}".format(dat_ita_root))
-
-    # get subject.txt from the server
-    subject_txt = get_from_server(subject_url)
-
-    # parse subject.txt to make sure list
-    sure_list = []
-    subject_lines = subject_txt.split('\n')
-    for s in subject_lines:
-        m = re.match(r'(\d+?\.dat)<>(.*) \((\d+)\)$', s.rstrip())
-        if m:
-            dat_name = m.group(1)
-            dat_title = m.group(2)
-            dat_resu = m.group(3)
-            sure_list.append((dat_name, dat_title, dat_resu))
+    exit()
 
     # format and save sure list to local file "sure_list.txt".
     if not os.path.isdir(dat_ita_root):
