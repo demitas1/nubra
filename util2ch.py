@@ -89,8 +89,15 @@ if __name__ == '__main__':
     p = o.path
     if p[-1] != '/':
         p += '/'
-    subject_url = "http://" + o.netloc + o.path + "subject.txt"
-    print(subject_url)
+    subject_url = "http://" + o.netloc + p + "subject.txt"
+    print("subject url:{}".format(subject_url))
+
+    # generate local file path for subjects
+    p = o.path
+    if p[0] == '/':
+        p = p[1:]
+    dat_ita_root = os.path.join(dat_bbs_root, o.netloc, p)
+    print("ita local dir:{}".format(dat_ita_root))
 
     # get subject.txt from the server
     subject_txt = get_from_server(subject_url)
@@ -105,6 +112,15 @@ if __name__ == '__main__':
             dat_title = m.group(2)
             dat_resu = m.group(3)
             sure_list.append((dat_name, dat_title, dat_resu))
+
+    # format and save sure list to local file "sure_list.txt".
+    if not os.path.isdir(dat_ita_root):
+        os.makedirs(dat_ita_root, exist_ok=True)
+    path_subjects = os.path.join(dat_ita_root, "sure_list.txt")
+    with codecs.open(path_subjects, 'w', 'utf-8') as f:
+        for s in sure_list:
+            f.write('\t'.join(s))
+            f.write('\n')
 
     # output top-10 sure for test
     for i in range(0, min(10, len(sure_list))):

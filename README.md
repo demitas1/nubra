@@ -14,11 +14,34 @@ nubraは、おーぷん2ch用のブラウザを作ってみるプロジェクト
 
 - open2ch.netの板一覧を取ってくる
 - ランダムに板を選んでトップ10のスレタイトルとdatファイル名を取る
+- 板ごとのdatファイル置き場をつくって、スレ一覧を保存する
 
 ```
 $ python util2ch.py
-$ cat ita_list.txt
+$ cat dat/open2ch.net/ita_list.txt
 ```
+
+### ローカルdatディレクトリの構造
+
+`dat`ディレクトリの下にBBSディレクトリ、サーバーディレクトリ、板ディレクトリが階層構造をともなって作成されます。ここに板ごとのdatファイルがセーブされる予定。
+
+例：
+
+```
+$ tree ./dat
+./dat
+└── open2ch.net
+    ├── awabi.open2ch.net
+    │   └── camera
+    │       └── sure_list.txt
+    ├── ikura.open2ch.net
+    │   ├── material
+    │   │   └── sure_list.txt
+    │   └── news5
+    │       └── sure_list.txt
+    └── ita_list.txt
+```
+
 
 ### ライセンス
 
