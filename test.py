@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import util2ch
+import random
 
 
 default_bbs = {
@@ -17,7 +18,6 @@ if __name__ == '__main__':
     bbs.update()
 
     # choose ita randomly
-    import random
     ita = random.choice(bbs.ita_list)
     print("ita:{}".format(str(ita)))
 
@@ -26,28 +26,19 @@ if __name__ == '__main__':
     print("ita local dir:[{}]".format(ita.dat_root()))
     ita.update()
 
-    exit()
-
-    # format and save sure list to local file "sure_list.txt".
-    if not os.path.isdir(dat_ita_root):
-        os.makedirs(dat_ita_root, exist_ok=True)
-    path_subjects = os.path.join(dat_ita_root, "sure_list.txt")
-    with codecs.open(path_subjects, 'w', 'utf-8') as f:
-        for s in sure_list:
-            f.write('\t'.join(s))
-            f.write('\n')
-
-    # output top-10 sure for test
-    for i in range(0, min(10, len(sure_list))):
-        dat_name, dat_title, dat_resu = sure_list[i]
-        print("{}:{} ({})".format(dat_name, dat_title, dat_resu))
+    # output top-5 sure for test
+    for sure_info in ita.sure_list[:5]:
+        print("{} ({})".format(sure_info.title, sure_info.n_resu))
 
     # generate dat url/local path for the top sure
-    dat_name, dat_title, dat_resu = sure_list[0]
-    dat_url = urljoin(ita_url, 'dat/' + dat_name)
-    print("dat url:[{}]".format(dat_url))
-    dat_local_path = os.path.join(dat_ita_root, dat_name)
-    print("dat local path:[{}]".format(dat_local_path))
+    sure_info = ita.sure_list[0]
+    print("dat local path:[{}]".format(sure_info.path_dat()))
+    print("dat url:[{}]".format(sure_info.url_dat()))
+
+
+    exit()
+
+
 
     # compare local dat file to check newer resu
     if os.path.exists(dat_local_path):

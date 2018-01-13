@@ -91,8 +91,7 @@ class BBS(object):
         path_bbsmenu = os.path.join(self.dat_bbs_root, config["file_bbsmenu"])
         with codecs.open(path_bbsmenu, 'w', 'utf-8') as f:
             for ita in self.ita_list:
-                f.write(str(ita))
-                f.write('\n')
+                f.write(str(ita) + '\n')
 
 
 class Ita(object):
@@ -135,6 +134,7 @@ class Ita(object):
     def update(self):
         subject_txt = self.get_from_server()
         self.read_from_text(subject_txt)
+        self.save_sure_list()
 
     def get_from_server(self):
         subject_txt = get_from_server(self.url_subject())
@@ -145,9 +145,68 @@ class Ita(object):
         self.sure_list = []
         subject_lines = subject_txt.split('\n')
         for s in subject_lines:
-            m = re.match(r'(\d+?\.dat)<>(.*) \((\d+)\)$', s.rstrip())
-            if m:
-                dat_name = m.group(1)
-                dat_title = m.group(2)
-                dat_resu = m.group(3)
-                self.sure_list.append((dat_name, dat_title, dat_resu))
+            sure_info = SureInfo(self)
+            if sure_info.read_from_text(s):
+                self.sure_list.append(sure_info)
+
+    def save_sure_list(self):
+        dat_ita_root = self.dat_root()
+        if not dat_ita_root:
+            return
+
+        # format and save sure list to local file "sure_list.txt".
+        if not os.path.isdir(dat_ita_root):
+            os.makedirs(dat_ita_root, exist_ok=True)
+        path_subjects = os.path.join(dat_ita_root, "sure_list.txt")
+        with codecs.open(path_subjects, 'w', 'utf-8') as f:
+            for s in self.sure_list:
+                f.write(str(s) + '\n')
+
+
+class SureInfo(object):
+    def __init__(self, parent=None):
+        self.parent = parent
+        self.dat_name = None
+        self.title = None
+        self.n_resu = None
+        self._path_dat = None
+        self._url_dat = None
+
+    def __str__(self):
+        return '{}\t{}\t{}'.format(
+            self.dat_name,
+            self.title,
+            self.n_resu)
+
+    def read_from_text(self, s):
+        m = re.match(r'(\d+?\.dat)<>(.*) \((\d+)\)$', s.rstrip())
+        if m:
+            self.dat_name = m.group(1)
+            self.title = m.group(2)
+            self.n_resu = int(m.group(3))
+            return True
+        else:
+            return False
+
+    def url_dat(self):
+        if not self._url_dat:
+            if not self.dat_name:
+                return None
+            if not self.parent:
+                return None
+            if not self.parent.url:
+                return None
+            self._url_dat = urljoin(self.parent.url, 'dat/' + self.dat_name)
+        return self._url_dat
+
+    def path_dat(self):
+        if not self._path_dat:
+            if not self.dat_name:
+                return None
+            if not self.parent:
+                return None
+            dat_ita_root = self.parent.dat_root()
+            if not dat_ita_root:
+                return None
+            self._path_dat = os.path.join(dat_ita_root, self.dat_name)
+        return self._path_dat
