@@ -37,27 +37,15 @@ if __name__ == '__main__':
     print("dat local path:[{}]".format(sure_info.path_dat()))
     print("dat url:[{}]".format(sure_info.url_dat()))
 
-    # compare local dat file to check newer resu
-    if os.path.exists(sure_info.path_dat()):
-        with open(sure_info.path_dat(), 'r') as f:
-            dat_content = f.readlines()
-            n_resu_dat_local = len(dat_content)
-    else:
-        n_resu_dat_local = 0
-    n_resu_dat_server = sure_info.n_resu
-    print("server[{}]:local[{}]".format(n_resu_dat_server, n_resu_dat_local))
-    exists_newer_dat = n_resu_dat_server > n_resu_dat_local
-    if exists_newer_dat:
-        print("get from server...")
-    else:
-        print("read local file...")
-
     # get latest dat file from the server
-    if exists_newer_dat:
-        dat_content = util2ch.get_from_server(sure_info.url_dat())
+    if sure_info.exists_newer():
+        print("get form server...")
+        dat_content = sure_info.get_from_server()
         # save dat file
-        with codecs.open(sure_info.path_dat(), 'w', 'utf-8') as f:
-            f.write(dat_content)
+        sure_info.save_to_local()
+    else:
+        print("get form local file...")
+        dat_content = sure_info.load_from_local()
 
     # show last 3 resu of the sure
     dat_lines = dat_content.split('\n')

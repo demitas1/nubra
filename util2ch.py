@@ -171,6 +171,8 @@ class SureInfo(object):
         self.n_resu = None
         self._path_dat = None
         self._url_dat = None
+        self.dat_content = None
+        self._exists_newer = None
 
     def __str__(self):
         return '{}\t{}\t{}'.format(
@@ -210,3 +212,74 @@ class SureInfo(object):
                 return None
             self._path_dat = os.path.join(dat_ita_root, self.dat_name)
         return self._path_dat
+
+    def exists_newer(self):
+        if self.n_resu is None:
+            pass # todo: throw exception
+        if self.path_dat() is None:
+            pass # todo: throw exception
+
+        if self._exists_newer is None:
+            # compare local dat file to check newer resu
+            if os.path.exists(self.path_dat()):
+                self.load_from_local()
+                n_resu_dat_local = len(self.dat_content)
+            else:
+                n_resu_dat_local = 0
+            n_resu_dat_server = self.n_resu
+            self._exists_newer = n_resu_dat_server > n_resu_dat_local
+        return self._exists_newer
+
+    def load_from_local(self):
+        if self.path_dat() is None:
+            pass # todo: throw exception
+
+        if self.dat_content is None:
+            with open(self.path_dat(), 'r') as f:
+                self.dat_content = f.readlines()
+        return self.dat_content
+
+    def save_to_local(self):
+        if self.path_dat() is None:
+            pass # todo: throw exception
+        if self.dat_content is None:
+            pass # todo: throw exception
+
+        with codecs.open(self.path_dat(), 'w', 'utf-8') as f:
+            f.write(self.dat_content)
+
+    def get_from_server(self):
+        if self.url_dat() is None:
+            pass # todo: throw exception
+        self.dat_content = get_from_server(self.url_dat())
+        return self.dat_content
+
+
+class Sure(object):
+    def __init__(self):
+        self.resu = []
+
+    def __len__(self):
+        return len(self.resu)
+
+    def __getitem__(self, key):
+        if isinstance(key, slice):
+            return [self.resu[i] for i in range(key.start, key.stop)]
+        elif key < len(self.resu):
+            return self.resu[key]
+        else:
+            return None
+
+    def __iter__(self):
+        return iter(self.resu)
+
+    def length(self):
+        return len(self.resu)
+
+    def append(self, new_resu):
+        self.resu.append(new_resu)
+
+
+class Resu(object):
+    def __init__(self):
+        self.raw_text = None
