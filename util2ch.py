@@ -265,24 +265,29 @@ class Sure(object):
     def __len__(self):
         return len(self.resu)
 
-    def __getitem__(self, key):
-        if isinstance(key, slice):
-            return [self.resu[i] for i in range(key.start, key.stop)]
-        elif key < len(self.resu):
-            return self.resu[key]
-        else:
-            return None
+    def __getitem__(self, slice_or_index):
+        return self.resu[slice_or_index]
 
     def __iter__(self):
         return iter(self.resu)
 
-    def length(self):
-        return len(self.resu)
-
     def append(self, new_resu):
         self.resu.append(new_resu)
+
+    def read_from_text(self, dat_text):
+        self.resu = []
+        lines = dat_text.split('\n')
+        for i_resu, line in enumerate(lines):
+            line = line.rstrip()
+            if len(line) > 0:
+                resu = Resu()
+                resu.read_from_text(line)
+                self.resu.append(resu)
 
 
 class Resu(object):
     def __init__(self):
         self.raw_text = None
+
+    def read_from_text(self, dat_line):
+        self.raw_text = dat_line

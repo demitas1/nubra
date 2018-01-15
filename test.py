@@ -48,6 +48,7 @@ if __name__ == '__main__':
         dat_content = sure_info.load_from_local()
 
     # show last 3 resu of the sure
-    dat_lines = dat_content.split('\n')
-    for l in dat_lines[-3:]:
-        print(l)
+    sure = util2ch.Sure()
+    sure.read_from_text(dat_content)
+    for r in sure[-3:]:
+        print(r.raw_text)
