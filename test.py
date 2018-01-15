@@ -7,9 +7,9 @@ import codecs
 
 
 default_bbs = {
-    "bbs_name" : "おーぷん2ch",
-    "url_bbs" : "http://open2ch.net",
-    "url_bbsmenu" : "http://menu.open2ch.net/bbsmenu.html",
+    "bbs_name": "おーぷん2ch",
+    "url_bbs": "http://open2ch.net",
+    "url_bbsmenu": "http://menu.open2ch.net/bbsmenu.html",
     }
 
 

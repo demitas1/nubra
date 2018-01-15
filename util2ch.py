@@ -13,12 +13,14 @@ import os.path
 
 
 config = {
-    "data_dir" : "./dat",
-    "file_bbsmenu" : "ita_list.txt",
-    "wait_get" : 2,
+    "data_dir": "./dat",
+    "file_bbsmenu": "ita_list.txt",
+    "wait_get": 2,
     }
 
-default_ua = { "User-Agent" : "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2227.0 Safari/537.36" }
+default_ua = {
+    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2227.0 Safari/537.36"
+    }
 
 
 def get_from_server(url, charset=None):
@@ -55,14 +57,12 @@ class BBS(object):
         self.url_bbsmenu = bbs_property["url_bbsmenu"]
         self.ita_list = []
 
-
     def make_dat_root(self):
         # make dat root dir for the bbs
         o = urlparse(self.url_bbs)
         self.dat_bbs_root = os.path.join(config["data_dir"], o.netloc)
         if not os.path.isdir(self.dat_bbs_root):
             os.makedirs(self.dat_bbs_root, exist_ok=True)
-
 
     def update(self):
         content = self.get_menu_from_server()
@@ -128,7 +128,10 @@ class Ita(object):
                 p = o.path
                 if p[0] == '/':
                     p = p[1:]
-                self._dat_root = os.path.join(self.parent.dat_bbs_root, o.netloc, p)
+                self._dat_root = os.path.join(
+                    self.parent.dat_bbs_root,
+                    o.netloc,
+                    p)
         return self._dat_root
 
     def update(self):
@@ -215,9 +218,9 @@ class SureInfo(object):
 
     def exists_newer(self):
         if self.n_resu is None:
-            pass # todo: throw exception
+            pass  # todo: throw exception
         if self.path_dat() is None:
-            pass # todo: throw exception
+            pass  # todo: throw exception
 
         if self._exists_newer is None:
             # compare local dat file to check newer resu
@@ -232,7 +235,7 @@ class SureInfo(object):
 
     def load_from_local(self):
         if self.path_dat() is None:
-            pass # todo: throw exception
+            pass  # todo: throw exception
 
         if self.dat_content is None:
             with open(self.path_dat(), 'r') as f:
@@ -241,16 +244,16 @@ class SureInfo(object):
 
     def save_to_local(self):
         if self.path_dat() is None:
-            pass # todo: throw exception
+            pass  # todo: throw exception
         if self.dat_content is None:
-            pass # todo: throw exception
+            pass  # todo: throw exception
 
         with codecs.open(self.path_dat(), 'w', 'utf-8') as f:
             f.write(self.dat_content)
 
     def get_from_server(self):
         if self.url_dat() is None:
-            pass # todo: throw exception
+            pass  # todo: throw exception
         self.dat_content = get_from_server(self.url_dat())
         return self.dat_content
 
