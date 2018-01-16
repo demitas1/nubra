@@ -10,6 +10,8 @@ import re
 import time
 import os
 import os.path
+import html
+from datetime import datetime, timedelta
 
 
 config = {
@@ -23,6 +25,9 @@ default_ua = {
     }
 
 
+#
+# functinos for http connection
+#
 def get_from_server(url, charset=None):
     # wait 2sec to avoid server overload
     time.sleep(config["wait_get"])
@@ -48,6 +53,18 @@ def get_from_server(url, charset=None):
     else:
         content = data_bytes.decode(charset)
     return content
+
+
+#
+# datetime utility functions
+#
+def normalize_date(info_datetime):
+    m = re.match(r'(\d+)/(\d+)/(\d+)...(\d+):(\d+):([0-9]+)', info_datetime)
+    if m:
+        yy, mm, dd, HH, MM, SS = m.groups()
+    if int(yy) < 2000:
+        yy += 2000
+    return '{}/{}/{} {}:{}:{}'.format(yy, mm, dd, HH, MM, SS)
 
 
 class BBS(object):
@@ -259,7 +276,8 @@ class SureInfo(object):
 
 
 class Sure(object):
-    def __init__(self):
+    def __init__(self, parent=None):
+        self.parent = parent
         self.resu = []
 
     def __len__(self):
@@ -280,14 +298,80 @@ class Sure(object):
         for i_resu, line in enumerate(lines):
             line = line.rstrip()
             if len(line) > 0:
-                resu = Resu()
+                resu = Resu(parent=self)
                 resu.read_from_text(line)
                 self.resu.append(resu)
 
 
 class Resu(object):
-    def __init__(self):
+    def __init__(self, parent=None):
+        self.parent = parent
+
         self.raw_text = None
 
-    def read_from_text(self, dat_line):
-        self.raw_text = dat_line
+        self.user_name = None
+        self.u_name = None
+        self.u_trip = None
+        self.email = None
+        self.info_datetime = None
+        self.info_id = None
+        self.content = None
+        self.content_html = None
+        self.title = None
+
+        self.anchor = []
+        self.datetime = None
+
+    def read_from_text(self, dat_raw_text):
+        self.raw_text = dat_raw_text
+        resu = dat_raw_text.rstrip().split('<>')
+        if len(resu) != 5:
+            return  # todo: throw exception
+        self.user_name = resu[0]
+        self.email = resu[1]
+        info = resu[2]
+        content = resu[3]
+        self.title = resu[4]
+
+        # parse date/time/id field
+        ma = re.match(r'(.*) ID:(.*)', info)
+        if ma:
+            self.info_datetime = ma.group(1)
+            self.info_id = ma.group(2)
+        else:
+            self.info_datetime = info
+            self.info_id = ''
+
+        # convert content to plain text
+        content = html.unescape(content)
+        self.content = re.sub(r'<br>', '\n', content)
+        self.content_html = self.make_html(self.content)
+
+        # scan content text to find anchors
+        for m in re.finditer(r">>(\d+)", self.content):
+            self.anchor.append(int(m.group(1))-1)
+
+    def make_html(self, text):
+        html = re.sub('\n', '<br />', text)
+        return html
+
+    def get_datetime(self):
+        if not self.datetime:
+            s_datetime = normalize_date(self.info_datetime)
+            self.datetime = datetime.strptime(s_datetime, '%Y/%m/%d %H:%M:%S')
+        return self.datetime
+
+    def separate_trip(self):
+        m = re.match(r'(.*)◆(.*)', self.user_name)
+        if m:
+            self.u_name = m.group(1)
+            self.u_trip = m.group(2)
+        else:
+            self.u_name = self.user_name
+            self.u_trip = ''
+
+        # separate !ninja
+        m = re.match(r'(.*)■(.*)', self.u_name)
+        if m:
+            self.u_name = m.group(1)
+        return (self.u_name, self.u_trip)
