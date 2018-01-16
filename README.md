@@ -5,18 +5,20 @@
 
 
 
-### 概要
+## 概要
 
 nubraは、おーぷん2ch用のブラウザを作ってみるプロジェクトです。
 今のところ、Flaskを使ってp2ブラウザっぽいものを作るのことを想定しています。
 
-### これまで出来たもの
+## これまで出来たもの
+
+### 基礎部分 (util2ch.py)
 
 - クラスの作成
+- BBS, Ita, SureInfo, Sure, Resu
+- Resu(レス)内容のHTML化
 
- - BBS, Ita, SureInfo, Sure, Resu
- - Resu(レス)内容のHTML化
-
+### CUIベースのサンプルプログラム (test.py)
 
 - open2ch.netの板一覧を取ってくる
 - ランダムに板を選んでトップ10のスレタイトルとdatファイル名を取る
@@ -27,6 +29,17 @@ nubraは、おーぷん2ch用のブラウザを作ってみるプロジェクト
 $ python test.py
 $ cat dat/open2ch.net/ita_list.txt
 ```
+
+### Flaskの起動 (nubra)
+
+- Flaskをコマンドラインから起動してブラウザを開く
+
+```
+$ ./nubra
+```
+
+FlaskのチュートリアルにあるHelloWorldがlocalhost:5000で開く
+
 
 ### Known issues
 
@@ -64,6 +77,8 @@ MIT License
 
 ### 開発環境セットアップ
 
+- http接続、datのテキスト処理関係の基本部分
+
 ```
 $ conda create --name nubra python=3
 $ source activate nubra
@@ -72,6 +87,12 @@ $ pip install urllib3 lxml requests chardet python-dateutil
 
 なんとなく必要そうなものを入れているが、必須でないものも多分ある
 
+- Flaskのインストール
+
+```
+$ source activate nubra
+$ pip install Flask
+```
 
 ### environ memo
 
@@ -80,14 +101,20 @@ $ pip list
 
 certifi (2017.11.5)
 chardet (3.0.4)
+click (6.7)
+Flask (0.12.2)
 idna (2.6)
+itsdangerous (0.24)
+Jinja2 (2.10)
 lxml (4.1.1)
+MarkupSafe (1.0)
 pip (9.0.1)
 python-dateutil (2.6.1)
 requests (2.18.4)
 setuptools (38.4.0)
 six (1.11.0)
 urllib3 (1.22)
+Werkzeug (0.14.1)
 wheel (0.30.0)
 
 $ conda list
@@ -95,8 +122,13 @@ $ conda list
 ca-certificates           2017.11.5                     0    conda-forge
 certifi                   2017.11.5                py36_0    conda-forge
 chardet                   3.0.4                     <pip>
+click                     6.7                       <pip>
+Flask                     0.12.2                    <pip>
 idna                      2.6                       <pip>
+itsdangerous              0.24                      <pip>
+Jinja2                    2.10                      <pip>
 lxml                      4.1.1                     <pip>
+MarkupSafe                1.0                       <pip>
 ncurses                   5.9                          10    conda-forge
 openssl                   1.0.2n                        0    conda-forge
 pip                       9.0.1                    py36_1    conda-forge
@@ -109,6 +141,7 @@ six                       1.11.0                    <pip>
 sqlite                    3.20.1                        2    conda-forge
 tk                        8.6.7                         0    conda-forge
 urllib3                   1.22                      <pip>
+Werkzeug                  0.14.1                    <pip>
 wheel                     0.30.0                   py36_2    conda-forge
 xz                        5.2.3                         0    conda-forge
 zlib                      1.2.11                        0    conda-forge

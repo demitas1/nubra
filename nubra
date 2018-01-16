@@ -1,0 +1,2 @@
+export FLASK_APP=nubra.py
+python nubra.py
