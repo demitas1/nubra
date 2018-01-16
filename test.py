@@ -51,4 +51,17 @@ if __name__ == '__main__':
     sure = util2ch.Sure(parent=ita)
     sure.read_from_text(dat_content)
     for r in sure[-3:]:
-        print(r.raw_text)
+        if len(r.info_id) >= 3:
+            print("{}: {}[{}] {} ID:{}".format(
+                r.resu_number,
+                r.user_name,
+                r.email,
+                r.info_datetime,
+                r.info_id))
+        else:
+            print("{}: {}[{}] {}".format(
+                r.resu_number,
+                r.user_name,
+                r.email,
+                r.info_datetime))
+        print(r.content_html)

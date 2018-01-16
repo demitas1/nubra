@@ -12,9 +12,11 @@ nubraは、おーぷん2ch用のブラウザを作ってみるプロジェクト
 
 ### これまで出来たもの
 
-- BBSクラス
-- Itaクラスの作成
-- SureInfoクラスの作成
+- クラスの作成
+
+ - BBS, Ita, SureInfo, Sure, Resu
+ - Resu(レス)内容のHTML化
+
 
 - open2ch.netの板一覧を取ってくる
 - ランダムに板を選んでトップ10のスレタイトルとdatファイル名を取る
@@ -25,6 +27,10 @@ nubraは、おーぷん2ch用のブラウザを作ってみるプロジェクト
 $ python test.py
 $ cat dat/open2ch.net/ita_list.txt
 ```
+
+### Known issues
+
+- たまに、文字コードエラーがでる
 
 ### ローカルdatディレクトリの構造
 

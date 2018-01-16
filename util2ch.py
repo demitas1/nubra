@@ -300,6 +300,7 @@ class Sure(object):
             if len(line) > 0:
                 resu = Resu(parent=self)
                 resu.read_from_text(line)
+                resu.resu_number = i_resu + 1
                 self.resu.append(resu)
 
 
@@ -310,8 +311,6 @@ class Resu(object):
         self.raw_text = None
 
         self.user_name = None
-        self.u_name = None
-        self.u_trip = None
         self.email = None
         self.info_datetime = None
         self.info_id = None
@@ -319,6 +318,7 @@ class Resu(object):
         self.content_html = None
         self.title = None
 
+        self.resu_number = 0
         self.anchor = []
         self.datetime = None
 
@@ -360,18 +360,3 @@ class Resu(object):
             s_datetime = normalize_date(self.info_datetime)
             self.datetime = datetime.strptime(s_datetime, '%Y/%m/%d %H:%M:%S')
         return self.datetime
-
-    def separate_trip(self):
-        m = re.match(r'(.*)◆(.*)', self.user_name)
-        if m:
-            self.u_name = m.group(1)
-            self.u_trip = m.group(2)
-        else:
-            self.u_name = self.user_name
-            self.u_trip = ''
-
-        # separate !ninja
-        m = re.match(r'(.*)■(.*)', self.u_name)
-        if m:
-            self.u_name = m.group(1)
-        return (self.u_name, self.u_trip)
