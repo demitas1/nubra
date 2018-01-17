@@ -1,0 +1,5 @@
+<!doctype html>
+<title>Index page by Flask</title>
+{% for ita in ita_list %}
+  <div><b>{{ ita.title }}:</b> {{ ita.url }}</div>
+{% endfor %}
