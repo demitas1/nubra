@@ -1,19 +1,30 @@
 from flask import Flask
 from flask import render_template
 
+import util2ch
+
 app = Flask(__name__)
+
+# initialize
+default_bbs = {
+    "bbs_name": "おーぷん2ch",
+    "url_bbs": "http://open2ch.net",
+    "url_bbsmenu": "http://menu.open2ch.net/bbsmenu.html",
+    }
+
+
+def bbs_init():
+    # create BBS instance for open2ch.net
+    bbs = util2ch.BBS(default_bbs)
+    bbs.make_dat_root()
+    bbs.update()
+    return bbs
 
 
 @app.route('/')
 def index():
-    ita_list = [
-        { 'title': 'ita 1', 'url': 'url1'},
-        { 'title': 'ita 2', 'url': 'url2'},
-        { 'title': 'ita 3', 'url': 'url3'},
-        { 'title': 'ita 4', 'url': 'url4'},
-        { 'title': 'ita 5', 'url': 'url5'},
-    ]
-    return render_template('index.html', ita_list=ita_list)
+    bbs = bbs_init()
+    return render_template('index.html', ita_list=bbs.ita_list)
 
 
 @app.route('/hello')
