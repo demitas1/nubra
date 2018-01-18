@@ -1,0 +1,10 @@
+#outer {
+    display: flex;
+    margin: 0px;
+    padding: 0px;
+    width: 100vw;
+    height: 95vh;
+    max-width: 100%;
+    background-color: lightgray;
+}
+

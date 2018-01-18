@@ -3,7 +3,7 @@ from flask import render_template
 
 import util2ch
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static')
 
 # initialize
 default_bbs = {
