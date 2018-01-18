@@ -103,12 +103,31 @@ class BBS(object):
                     ita = Ita(ita_category, ita_title, ita_url, parent=self)
                     self.ita_list.append(ita)
 
-    def save_ita_list(self):
+    def save_ita_list(self, path=None):
         # save ita list to a file
-        path_bbsmenu = os.path.join(self.dat_bbs_root, config["file_bbsmenu"])
-        with codecs.open(path_bbsmenu, 'w', 'utf-8') as f:
+        if path is None:
+            path = os.path.join(self.dat_bbs_root, config["file_bbsmenu"])
+
+        with codecs.open(path, 'w', 'utf-8') as f:
             for ita in self.ita_list:
                 f.write(str(ita) + '\n')
+
+    def load_ita_list(self, path=None):
+        # load ita list from a file
+        if path is None:
+            path = os.path.join(self.dat_bbs_root, config["file_bbsmenu"])
+
+        if not os.path.exists(path):
+            return False
+
+        with codecs.open(path, 'r', 'utf-8') as f:
+            lines = f.readlines()
+        for s in lines:
+            d = s.split('\t')
+            if len(d) >= 3:
+                ita = Ita(d[0], d[1], d[2], parent=self)
+                self.ita_list.append(ita)
+        return True
 
 
 class Ita(object):

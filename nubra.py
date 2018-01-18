@@ -17,7 +17,8 @@ def bbs_init():
     # create BBS instance for open2ch.net
     bbs = util2ch.BBS(default_bbs)
     bbs.make_dat_root()
-    bbs.update()
+    if not bbs.load_ita_list():
+        bbs.update()
     return bbs
 
 

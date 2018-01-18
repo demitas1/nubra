@@ -1,5 +1,8 @@
 <!doctype html>
 <title>Index page by Flask</title>
+
+<div style="overflow-y:scroll; height:100%; width: 200px; background:lightgray">
 {% for ita in ita_list %}
-  <div><b>{{ ita.title }}:</b> {{ ita.url }}</div>
+  <div><a href="{{ ita.url }}">{{ ita.title }}</a></div>
 {% endfor %}
+</div>
