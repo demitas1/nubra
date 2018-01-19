@@ -12,9 +12,17 @@
 
 <script language="javascript" type="text/javascript">
 function LoadItaSubject(title, url) {
-    s = "<div>" + title + "</div>";
-    s += "<div>" + url + "</div>";
-    $("#surelist").load("/subjects?url=" + url + "&title=" + title)
+    $.getJSON("/subjects",
+        "url=" + url + "&title=" + title,
+        function(data, textStatus, jqXHR) {
+            sure_list = "";
+            for (var i=0; i < data.length; i++){
+                title = data[i].title;
+                n_resu = data[i].n_resu;
+                sure_list += "<div>" + title + " (" + n_resu + ")</div>";
+            }
+            $("#surelist").html(sure_list);
+        });
 }
 </script>
 
@@ -23,16 +31,16 @@ function LoadItaSubject(title, url) {
 <body>
 
 <div id="outer">
-    <div id="italist" class="col-sm-2" style="overflow:scroll;">
+    <div id="italist" class="col-sm-2" style="overflow-x:scroll; overflow-y:scroll; white-space: nowrap">
     {% for ita in ita_list %}
       <div><a href="javascript:void(0);" onclick="LoadItaSubject('{{ ita.title}}', '{{ ita.url }}');">{{ ita.title }}</a></div>
     {% endfor %}
     </div>
 
-    <div id="surelist" class="col-sm-4" style="overflow:scroll;">
+    <div id="surelist" class="col-sm-4" style="overflow-x:scroll; overflow-y:scroll; white-space: nowrap">
     </div>
 
-    <div id="sureview" class="col-sm-6" style="overflow:scroll;">
+    <div id="sureview" class="col-sm-6" style="overflow-x:scroll; overflow-y:scroll; white-space: nowrap">
     </div>
 </div>
 

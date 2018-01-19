@@ -3,6 +3,7 @@ from flask import request
 from flask import render_template
 
 import util2ch
+import json
 
 app = Flask(__name__, static_folder='static')
 
@@ -42,10 +43,14 @@ def sure_subjects():
         return "invalid sure url."
     ita = util2ch.Ita('', ita_title, ita_url)
     ita.update()
-    s = ''
+    data = []
     for sure_info in ita.sure_list:
-        s += str(sure_info) + "<br />"
-    return s
+        s = {
+            "title": sure_info.title,
+            "n_resu": sure_info.n_resu,
+            }
+        data.append(s)
+    return json.dumps(data)
 
 
 if __name__ == '__main__':
