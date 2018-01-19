@@ -20,7 +20,7 @@ function LoadItaSubject(title, url) {
                 title = data[i].title;
                 n_resu = data[i].n_resu;
                 url_dat = data[i].url_dat;
-                sure_list += "<div><a href=\"javascript:void(0);\" onclick=\"LoadSure(\'" + url_dat + "\');\">" + title + " (" + n_resu + ")</a></div>";
+                sure_list += `<div><a href=\"javascript:void(0);\" onclick=\"LoadSure(\'${url_dat}\');\">${title} (${n_resu})</a></div>`;
             }
             $("#surelist").html(sure_list);
         });
