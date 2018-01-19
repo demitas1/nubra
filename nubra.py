@@ -48,9 +48,17 @@ def sure_subjects():
         s = {
             "title": sure_info.title,
             "n_resu": sure_info.n_resu,
+            "url_dat": sure_info.url_dat(),
             }
         data.append(s)
     return json.dumps(data)
+
+
+@app.route('/sure', methods=['GET'])
+def sure_view():
+    url = request.args.get("url")
+    j = {"url": url}
+    return json.dumps(j)
 
 
 if __name__ == '__main__':

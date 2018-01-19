@@ -19,9 +19,18 @@ function LoadItaSubject(title, url) {
             for (var i=0; i < data.length; i++){
                 title = data[i].title;
                 n_resu = data[i].n_resu;
-                sure_list += "<div>" + title + " (" + n_resu + ")</div>";
+                url_dat = data[i].url_dat;
+                sure_list += "<div><a href=\"javascript:void(0);\" onclick=\"LoadSure(\'" + url_dat + "\');\">" + title + " (" + n_resu + ")</a></div>";
             }
             $("#surelist").html(sure_list);
+        });
+}
+
+function LoadSure(url_dat) {
+    $.getJSON("/sure",
+        "url=" + url_dat,
+        function(data, textStatus, jqXHR) {
+            $("#sureview").html(data["url"]);
         });
 }
 </script>

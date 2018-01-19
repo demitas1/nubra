@@ -12,6 +12,18 @@ nubraは、おーぷん2ch用のブラウザを作ってみるプロジェクト
 
 ## これまで出来たもの
 
+### ブラウザの起動 (nubra)
+
+- Flaskをコマンドラインから起動してブラウザを開く
+
+```
+$ ./nubra
+```
+
+- 板一覧の表示
+- スレ一覧の表示
+
+
 ### 基礎部分 (util2ch.py)
 
 - クラスの作成
@@ -29,17 +41,6 @@ nubraは、おーぷん2ch用のブラウザを作ってみるプロジェクト
 $ python test.py
 $ cat dat/open2ch.net/ita_list.txt
 ```
-
-### Flaskの起動 (nubra)
-
-- Flaskをコマンドラインから起動してブラウザを開く
-
-```
-$ ./nubra
-```
-
-FlaskのチュートリアルにあるHelloWorldがlocalhost:5000で開く
-
 
 ### Known issues
 
