@@ -1,4 +1,5 @@
 from flask import Flask
+from flask import request
 from flask import render_template
 
 import util2ch
@@ -28,9 +29,23 @@ def index():
     return render_template('index.html', ita_list=bbs.ita_list)
 
 
-@app.route('/hello')
-def hello_world():
-    return 'Hello, World! (by nubra)'
+@app.route('/ita', methods=['GET'])
+def hello():
+    return 'Hello, World! args=[{}]'.format(request.args)
+
+
+@app.route('/subjects', methods=['GET'])
+def sure_subjects():
+    ita_title = request.args.get("title")
+    ita_url = request.args.get("url")
+    if not ita_url:
+        return "invalid sure url."
+    ita = util2ch.Ita('', ita_title, ita_url)
+    ita.update()
+    s = ''
+    for sure_info in ita.sure_list:
+        s += str(sure_info) + "<br />"
+    return s
 
 
 if __name__ == '__main__':

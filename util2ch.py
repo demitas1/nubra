@@ -99,7 +99,9 @@ class BBS(object):
             elif e.tag == 'a' and 'href' in e.attrib:
                 ita_url = e.attrib['href']
                 ita_title = e.text
-                if re.match(r'http://', ita_url, re.I):
+                m = re.match(r'(http://)(.*)', ita_url, re.I)
+                if m:
+                    ita_url = m.group(2)
                     ita = Ita(ita_category, ita_title, ita_url, parent=self)
                     self.ita_list.append(ita)
 
@@ -123,7 +125,7 @@ class BBS(object):
         with codecs.open(path, 'r', 'utf-8') as f:
             lines = f.readlines()
         for s in lines:
-            d = s.split('\t')
+            d = s.rstrip().split('\t')
             if len(d) >= 3:
                 ita = Ita(d[0], d[1], d[2], parent=self)
                 self.ita_list.append(ita)
@@ -149,7 +151,7 @@ class Ita(object):
     def url_subject(self):
         if self._url_subject is None:
             # generate url for subject.txt of the ita
-            o = urlparse(self.url)
+            o = urlparse('http://' + self.url)
             p = o.path
             if p[-1] != '/':
                 p += '/'
@@ -160,7 +162,7 @@ class Ita(object):
         if self._dat_root is None:
             if self.parent and self.parent.dat_bbs_root:
                 # generate local file path for subjects
-                o = urlparse(self.url)
+                o = urlparse('http://' + self.url)
                 p = o.path
                 if p[0] == '/':
                     p = p[1:]
@@ -237,7 +239,7 @@ class SureInfo(object):
                 return None
             if not self.parent.url:
                 return None
-            self._url_dat = urljoin(self.parent.url, 'dat/' + self.dat_name)
+            self._url_dat = urljoin('http://' + self.parent.url, 'dat/' + self.dat_name)
         return self._url_dat
 
     def path_dat(self):

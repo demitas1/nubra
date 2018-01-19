@@ -9,31 +9,30 @@
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+<script language="javascript" type="text/javascript">
+function LoadItaSubject(title, url) {
+    s = "<div>" + title + "</div>";
+    s += "<div>" + url + "</div>";
+    $("#surelist").load("/subjects?url=" + url + "&title=" + title)
+}
+</script>
+
 </head>
 
 <body>
 
 <div id="outer">
-    <div id="italist" class="col-sm-2" style="overflow-y:scroll;">
+    <div id="italist" class="col-sm-2" style="overflow:scroll;">
     {% for ita in ita_list %}
-      <div><a href="{{ ita.url }}">{{ ita.title }}</a></div>
+      <div><a href="javascript:void(0);" onclick="LoadItaSubject('{{ ita.title}}', '{{ ita.url }}');">{{ ita.title }}</a></div>
     {% endfor %}
     </div>
 
-    <div id="surelist" class="col-sm-4">
-    sure title<br />
-    sure title<br />
-    sure title<br />
-    sure title<br />
-    sure title<br />
+    <div id="surelist" class="col-sm-4" style="overflow:scroll;">
     </div>
 
-    <div id="sureview" class="col-sm-6">
-    sure content<br />
-    sure content<br />
-    sure content<br />
-    sure content<br />
-    sure content<br />
+    <div id="sureview" class="col-sm-6" style="overflow:scroll;">
     </div>
 </div>
 
