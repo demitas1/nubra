@@ -19,6 +19,7 @@ default_bbs = {
 
 def bbs_init():
     # create BBS instance for open2ch.net
+    global bbs
     bbs = util2ch.BBS(default_bbs)
     bbs.make_dat_root()
     if not bbs.load_ita_list():
@@ -43,14 +44,16 @@ def sure_subjects():
     ita_url = request.args.get("url")
     if not ita_url:
         return "invalid sure url."
-    ita = util2ch.Ita('', ita_title, ita_url)
+    ita = util2ch.Ita('', ita_title, ita_url, parent=bbs)
     ita.update()
+    print("Ita dat root:[{}]".format(ita.dat_root()))
     data = []
     for sure_info in ita.sure_list:
         s = {
             "title": sure_info.title,
             "n_resu": sure_info.n_resu,
             "url_dat": sure_info.url_dat(),
+            "path_dat": sure_info.path_dat(),
             }
         data.append(s)
     return json.dumps(data)
@@ -59,7 +62,13 @@ def sure_subjects():
 @app.route('/sure', methods=['GET'])
 def sure_view():
     url = request.args.get("url")
-    j = {"url": url}
+    path = request.args.get("path")
+    n_resu = request.args.get("n_resu")
+    j = {
+        "url": url,
+        "path": path,
+        "n_resu": n_resu,
+        }
     return json.dumps(j)
 
 

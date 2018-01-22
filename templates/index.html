@@ -14,23 +14,23 @@
 function LoadItaSubject(title, url) {
     $.getJSON("/subjects",
         "url=" + url + "&title=" + title,
-        function(data, textStatus, jqXHR) {
+        function(jsonData, textStatus, jqXHR) {
             sure_list = "";
-            for (var i=0; i < data.length; i++){
-                title = data[i].title;
-                n_resu = data[i].n_resu;
-                url_dat = data[i].url_dat;
-                sure_list += `<div><a href=\"javascript:void(0);\" onclick=\"LoadSure(\'${url_dat}\');\">${title} (${n_resu})</a></div>`;
+            for (var i=0; i < jsonData.length; i++){
+                sure_info = jsonData[i];
+                s_sure_info = escape(JSON.stringify(sure_info));
+                sure_list += `<div><a href=\"javascript:void(0);\" onclick=\"LoadSure(\'${s_sure_info}\');\">${sure_info.title} (${sure_info.n_resu})</a></div>`;
             }
             $("#surelist").html(sure_list);
         });
 }
 
-function LoadSure(url_dat) {
+function LoadSure(s_sure_info) {
+    sure_info = JSON.parse(unescape(s_sure_info));
     $.getJSON("/sure",
-        "url=" + url_dat,
+        `url=${sure_info.url_dat}&n_resu=${sure_info.n_resu}&path=${sure_info.path_dat}`,
         function(data, textStatus, jqXHR) {
-            $("#sureview").html(data["url"]);
+            $("#sureview").html(data["url"] + `<br>${data["path"]}<br>(${data["n_resu"]})`);
         });
 }
 </script>
