@@ -64,6 +64,7 @@ def sure_view():
     url = request.args.get("url")
     path = request.args.get("path")
     n_resu = request.args.get("n_resu")
+    sure_info = util2ch.SureInfo(base_url=url, base_path=path, n_resu=n_resu)
     j = {
         "url": url,
         "path": path,

@@ -29,6 +29,7 @@ default_ua = {
 # functinos for http connection
 #
 def get_from_server(url, charset=None):
+    print('get from url: [{}]'.format(url))
     # wait 2sec to avoid server overload
     time.sleep(config["wait_get"])
 
@@ -65,6 +66,34 @@ def normalize_date(info_datetime):
     if int(yy) < 2000:
         yy += 2000
     return '{}/{}/{} {}:{}:{}'.format(yy, mm, dd, HH, MM, SS)
+
+
+#
+# url/path utility functions
+#
+def separate_dat_url(url):
+    if not url.startswith('http://'):
+        url = 'http://' + url
+    print('separete url: [{}]'.format(url))
+    o = urlparse(url)
+
+    p = o.path
+    if p[0] == '/':
+        p = p[1:]
+
+    m = re.match(r'(.*)/([0-9]+\.dat)$', p)
+    if m:
+        path = m.group(1)
+        dat_name = m.group(2)
+    else:
+        path = p
+        dat_name = ''
+    print('[{}]:[{}]:[{}]'.format(o.netloc, path, dat_name))
+    return (o.netloc, path, dat_name)
+
+
+def separate_dat_path(path):
+    return
 
 
 class BBS(object):
@@ -162,14 +191,10 @@ class Ita(object):
         if self._dat_root is None:
             if self.parent and self.parent.dat_bbs_root:
                 # generate local file path for subjects
-                o = urlparse('http://' + self.url)
-                p = o.path
-                if p[0] == '/':
-                    p = p[1:]
+                (netloc, path, dat_name) = separate_dat_url(self.url)
                 self._dat_root = os.path.join(
                     self.parent.dat_bbs_root,
-                    o.netloc,
-                    p)
+                    netloc, path, dat_name)
         return self._dat_root
 
     def update(self):
@@ -205,13 +230,22 @@ class Ita(object):
 
 
 class SureInfo(object):
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, base_url=None, base_path=None,
+            dat_name=None, n_resu=None, title=None):
         self.parent = parent
-        self.dat_name = None
-        self.title = None
-        self.n_resu = None
-        self._path_dat = None
-        self._url_dat = None
+
+        self.dat_name = dat_name
+        self._path_dat = base_path
+        self._url_dat = base_url
+        if base_path:
+            pass  # separate path and set base_path and dat_name if given
+        if base_url:
+            pass  # separate url and set base_url and dat_name if given
+        if dat_name:
+            self.dat_name = dat_name
+
+        self.n_resu = n_resu
+        self.title = title
         self.dat_content = None
         self._exists_newer = None
 
