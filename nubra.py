@@ -65,12 +65,41 @@ def sure_view():
     path = request.args.get("path")
     n_resu = request.args.get("n_resu")
     sure_info = util2ch.SureInfo(base_url=url, base_path=path, n_resu=n_resu)
-    j = {
-        "url": url,
-        "path": path,
-        "n_resu": n_resu,
-        }
-    return json.dumps(j)
+
+    # get latest dat file from the server
+    if sure_info.exists_newer():
+        print("get form server...")
+        dat_content = sure_info.get_from_server()
+        # save dat file
+        sure_info.save_to_local()
+    else:
+        print("get form local file...")
+        dat_content = sure_info.load_from_local()
+
+    # show last 3 resu of the sure
+    sure = util2ch.Sure()
+    sure.read_from_text(dat_content)
+    j_sure = []
+    for r in sure[-3:]:
+        if len(r.info_id) >= 3:
+            j_resu = {
+                "number": r.resu_number,
+                "user_name": r.user_name,
+                "email": r.email,
+                "datetime": r.info_datetime,
+                "user_id": r.info_id,
+                }
+        else:
+            j_resu = {
+                "number": r.resu_number,
+                "user_name": r.user_name,
+                "email": r.email,
+                "datetime": r.info_datetime,
+                "user_id": "",
+                }
+        j_sure.append(j_resu)
+
+    return json.dumps(j_sure)
 
 
 if __name__ == '__main__':

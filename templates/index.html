@@ -30,7 +30,9 @@ function LoadSure(s_sure_info) {
     $.getJSON("/sure",
         `url=${sure_info.url_dat}&n_resu=${sure_info.n_resu}&path=${sure_info.path_dat}`,
         function(data, textStatus, jqXHR) {
-            $("#sureview").html(data["url"] + `<br>${data["path"]}<br>(${data["n_resu"]})`);
+            for (let resu of data) {
+                $("#sureview").html(resu["number"] + `<br>${resu["datetime"]}<br>(${resu["user_id"]})<br>`);
+            }
         });
 }
 </script>

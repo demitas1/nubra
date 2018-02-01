@@ -244,7 +244,10 @@ class SureInfo(object):
         if dat_name:
             self.dat_name = dat_name
 
-        self.n_resu = n_resu
+        if n_resu:
+            self.n_resu = int(n_resu)
+        else:
+            self.n_resu = None
         self.title = title
         self.dat_content = None
         self._exists_newer = None
