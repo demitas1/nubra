@@ -418,3 +418,21 @@ class Resu(object):
             s_datetime = normalize_date(self.info_datetime)
             self.datetime = datetime.strptime(s_datetime, '%Y/%m/%d %H:%M:%S')
         return self.datetime
+
+    def dump(self):
+        # dump object
+        j_resu = {
+            "number": self.resu_number,
+            "user_name": self.user_name,
+            "email": self.email,
+            "datetime": self.info_datetime,
+            "content": self.content,
+            "content_html": self.content_html,
+            "title": self.title,
+            }
+
+        if len(self.info_id) >= 3:
+            j_resu["user_id"] = self.info_id
+        else:
+            j_resu["user_id"] = ''
+        return j_resu

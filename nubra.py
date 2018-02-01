@@ -80,24 +80,8 @@ def sure_view():
     sure = util2ch.Sure()
     sure.read_from_text(dat_content)
     j_sure = []
-    for r in sure[-3:]:
-        if len(r.info_id) >= 3:
-            j_resu = {
-                "number": r.resu_number,
-                "user_name": r.user_name,
-                "email": r.email,
-                "datetime": r.info_datetime,
-                "user_id": r.info_id,
-                }
-        else:
-            j_resu = {
-                "number": r.resu_number,
-                "user_name": r.user_name,
-                "email": r.email,
-                "datetime": r.info_datetime,
-                "user_id": "",
-                }
-        j_sure.append(j_resu)
+    for r in sure:
+        j_sure.append(r.dump())
 
     return json.dumps(j_sure)
 
